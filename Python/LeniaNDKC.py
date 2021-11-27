@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore', '.*divide by zero encountered.*')  # suppress 
 warnings.filterwarnings('ignore', '.*invalid value encountered.*')  # suppress warning from divide by zero in normalize(), get_stat_row()
 warnings.filterwarnings('ignore', '.*nperseg.*') # suppress warning from scipy.signal.periodogram/welch
 
-parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, 
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
 description='''Lenia in n-Dimensions    by Bert Chan 2020
 
 recommended settings: (2D) -d2 -p2, (wide) -d2 -p0 -w 10 9, (3D) -d3 -p3, (4D) -d4 -p4''')
@@ -504,7 +504,7 @@ class Automaton:
         self.time = 0
 
 class Analyzer:
-    STAT_NAMES = {'p_m':'Param m', 'p_s':'Param s', 'n':'Gen (#)', 't':'Time (s)', 
+    STAT_NAMES = {'p_m':'Param m', 'p_s':'Param s', 'n':'Gen (#)', 't':'Time (s)',
         'm':'Mass (mg)', 'g':'Growth (mg/s)', 'r':'Gyradius (mm)',   # 'I':'Moment of inertia'
         'd':'Mass-growth distance (mm)', 's':'Speed (mm/s)', 'w':'Angular speed (deg/s)', 'm_a':'Mass asymmetry (mg)',
         'x':'X position(mm)', 'y':'Y position(mm)', 'l':'Lyapunov exponent',
@@ -526,8 +526,8 @@ class Analyzer:
         else:
             pos = [0]*DIM
         RN = np.power(R, DIM)
-        return [pm, ps, self.automaton.gen, self.automaton.time, 
-                self.mass/RN, self.growth/RN, np.sqrt(self.inertia/self.mass) if self.mass!=0 else 0,  # self.inertia/RN  # self.inertia*RN, 
+        return [pm, ps, self.automaton.gen, self.automaton.time,
+                self.mass/RN, self.growth/RN, np.sqrt(self.inertia/self.mass) if self.mass!=0 else 0,  # self.inertia/RN  # self.inertia*RN,
                 self.mg_dist, self.m_shift*T, self.m_rotate*T, self.mass_asym/RN,
                 pos[0], -pos[1], self.lyapunov,
                 self.symm_sides, self.symm_rotate*T]
@@ -574,7 +574,7 @@ class Analyzer:
         # self.shape_eccentricity = 0
         # self.shape_compactness = 0
         # self.shape_angle = 0
-        # self.shape_rotate = 0 
+        # self.shape_rotate = 0
 
     def reset_last(self):
         self.m_last_center = None
@@ -728,7 +728,7 @@ class Analyzer:
                     # sign = (X - x0)
                     # self.mass_mir = (A[sign>0]).sum() - (A[sign<0]).sum()
                     # self.aaa = A.copy(); self.aaa[sign<0] = 0
-            
+
             # self.lyapunov += ( np.log(abs(self.automaton.change.sum())) - self.lyapunov ) / self.automaton.gen
 
             if polar_what==0: A2 = self.world.cells
@@ -904,8 +904,8 @@ class Recorder:
     GIF_EXT = '.gif'
     TIF_EXT = '.tif'
     GIF_FPS = 25
-    VIDEO_FPS = 25
-    ffmpeg_cmd = ['/usr/local/bin/ffmpeg',
+    VIDEO_FPS = 60
+    ffmpeg_cmd = ['ffmpeg',
         '-loglevel','warning', '-y',  # glocal options
         '-f','rawvideo', '-vcodec','rawvideo', '-pix_fmt','rgb24',  # input options
         '-s','{x}x{y}'.format(x=SIZEX*PIXEL, y=SIZEY*PIXEL), '-r',str(VIDEO_FPS),
@@ -954,7 +954,7 @@ class Recorder:
             if not os.path.exists(self.img_dir):
                 os.makedirs(self.img_dir)
         else:
-            cmd = [s.replace('{input}', '-').replace('{output}', self.video_path) for s in self.ffmpeg_cmd]
+            cmd = [s.replace('{input}', '-').replace('{output}', self.video_path.replace('<', '_')) for s in self.ffmpeg_cmd]
             try:
                 '''tif'''
                 self.video = subprocess.Popen(cmd, stdin=subprocess.PIPE)    # stderr=subprocess.PIPE
@@ -990,7 +990,7 @@ class Recorder:
                 img_rgb = img.convert('RGB').tobytes()
                 self.video.stdin.write(img_rgb)
         # img.convert('P', dither=0)
-        self.gif.append(img)
+        # self.gif.append(img)
         self.record_seq += 1
 
     def finish_record(self):
@@ -1007,14 +1007,14 @@ class Recorder:
             if self.video:
                 self.video.stdin.close()
                 STATUS.append("> video saved to '" + self.video_path + "'")
-        durations = [1000 // self.GIF_FPS] * len(self.gif)
-        durations[-1] *= 10
-        '''tif'''
-        self.gif[0].save(self.gif_path, format=self.GIF_EXT.lstrip('.'), save_all=True, append_images=self.gif[1:], loop=0, duration=durations)
-        # self.gif[0].save(self.tif_path, save_all=True, append_images=self.gif[1:])
-        self.gif = None
-        STATUS.append("> GIF saved to '" + self.gif_path + "'")
-        self.is_recording = False
+        # durations = [1000 // self.GIF_FPS] * len(self.gif)
+        # durations[-1] *= 10
+        # '''tif'''
+        # self.gif[0].save(self.gif_path, format=self.GIF_EXT.lstrip('.'), save_all=True, append_images=self.gif[1:], loop=0, duration=durations)
+        # # self.gif[0].save(self.tif_path, save_all=True, append_images=self.gif[1:])
+        # self.gif = None
+        # STATUS.append("> GIF saved to '" + self.gif_path + "'")
+        # self.is_recording = False
 
 '''
 class CPPN:
@@ -1060,7 +1060,7 @@ class CPPN:
 class Lenia:
     MARKER_COLORS_W = [0x5F,0x5F,0x5F,0x7F,0x7F,0x7F,0xFF,0xFF,0xFF]
     MARKER_COLORS_B = [0x9F,0x9F,0x9F,0x7F,0x7F,0x7F,0x0F,0x0F,0x0F]
-    POLYGON_NAME = {1:'irregular', 2:'bilateral', 3:'trimeric', 4:'tetrameric', 5:'pentameric', 
+    POLYGON_NAME = {1:'irregular', 2:'bilateral', 3:'trimeric', 4:'tetrameric', 5:'pentameric',
         6:'hexameric', 7:'heptameric', 8:'octameric', 9:'nonameric', 10:'decameric', 0:'polymeric'}
     SAVE_ROOT = 'save'
     ANIMALS_PATH = 'animals.json' if DIM==2 else 'animals'+str(DIM)+'D.json'
@@ -1112,7 +1112,7 @@ class Lenia:
         self.search_back2 = None
         self.leaderboard_size = 10
         self.leaderboard = [{'fitness':float('-inf'), 'world':None} for i in range(self.leaderboard_size)]
-    
+
         self.is_show_slice = False
         self.z_slices = [MID[DIM-1-d] for d in range(DIM-2)]  # S, Z
         self.z_axis = DIM-3
@@ -1132,15 +1132,16 @@ class Lenia:
             self.create_colormap(np.asarray([[0,0,0],[3,3,3],[5,5,5],[7,7,7],[8,8,8]]))] #B/W
             # self.create_colormap_flat(255, 218, is_marker_w=False)]  #flat grey
         self.colormap_id = 0
-        
+
         self.channelmaps = np.asarray([
             [8,0,0],[0,8,0],[0,0,8], # RGB = Red/Green/Blue
             [6,3,0],[0,6,3],[3,0,6], # OTV = Orange/Turquoise/Violet
             [4,4,4],[3,3,3],[2,2,2], # Greyscale
             [8,0,0],[0,0,0],[0,0,0], # Red only
             [0,0,0],[0,8,0],[0,0,0], # Green only
-            [0,0,0],[0,0,0],[0,0,8]]) / 8  # Blue only
-        self.channelbg = np.asarray([[0,0,2], [0,1,0], [0,0,0], [0,0,2], [0,0,2], [0,0,2]]) / 8  # BG [0,0,2]
+            [0,0,0],[0,0,0],[0,0,8],
+            (8/447*np.asarray([225,197,25])),(8/414*np.asarray([236,138,40])),(8/239*np.asarray([64,159,16]))]) / 8  # Blue only
+        self.channelbg = np.asarray([[0,0,2], [0,1,0], [0,0,0], [0,0,2], [0,0,2], [0,0,2], [0,0,0]]) / 8  # BG [0,0,2]
         self.channel_shift = 0
 
         self.last_key = None
@@ -1470,7 +1471,7 @@ class Lenia:
         d = np.random.rand() * (dmax-dmin) + dmin
         p[i] = p[i0] / 10 * d
         p[i] = round(p[i], digit)
- 
+
     def random_params(self, is_incremental=False):
         is_small = np.random.randint(5) == 0
         R = np.random.randint(RAND_R1, RAND_R2) if RAND_R1 < RAND_R2 else RAND_R1
@@ -1566,7 +1567,7 @@ class Lenia:
         elif self.search_algo in [5]:
             fitness = sum(val_seg) / len(val_seg)
         elif self.search_algo in [6]:
-            avg = sum(val_seg) / len(val_seg) 
+            avg = sum(val_seg) / len(val_seg)
             var = sum([((x - avg) ** 2) for x in val_seg]) / len(val_seg)
             fitness = var ** 0.5
         func = ["max","avg","stdev"][self.search_algo-4]
@@ -1895,7 +1896,7 @@ class Lenia:
             group = self.channel_shift // 3
             st = []
             for c in CHANNEL:
-                color = "RGBOTVWEKR---G---B"[(c + self.channel_shift) % 3 + group * 3]
+                color = "RGBOTVWEKR---G---BFAL"[(c + self.channel_shift) % 3 + group * 3]
                 st.append('{c}:{color}'.format(c=c, color=color))
             return ','.join(st)
         else:
@@ -1988,7 +1989,7 @@ class Lenia:
         is_xy = self.stats_x_name in ['x'] and self.stats_y_name in ['y'] and self.stats_mode in [2]
         axes = tuple(reversed(range(DIM)))
         if is_shift and not self.is_auto_center:
-            shift = self.analyzer.total_shift_idx #if 'world' in markers else self.analyzer.total_shift_idx - self.analyzer.last_shift_idx 
+            shift = self.analyzer.total_shift_idx #if 'world' in markers else self.analyzer.total_shift_idx - self.analyzer.last_shift_idx
             A = [np.roll(A0, shift.astype(int), axes) for A0 in A]
             # A = scipy.ndimage.shift(A, self.analyzer.total_shift_idx, order=0, mode='wrap')
         if is_higher_zero and self.automaton.is_soft_clip and vmin==0:
@@ -2568,7 +2569,7 @@ class Lenia:
         #     self.load_found_animal_id(self.world, self.found_animal_id)
         self.load_part(self.world, self.fore)
         self.world_updated()
-    
+
     def invert_world(self):
         self.automaton.is_inverted = not self.automaton.is_inverted
         for k in KERNEL:
@@ -2627,7 +2628,7 @@ class Lenia:
         double_or_not  = 2 if 's+' not in k else 1
         inc_or_not     = 0 if 's+' not in k else 1
 
-        #inc_10_or_1   = (10 if 's+' not in k else 1) if 'c+' not in k else 0 
+        #inc_10_or_1   = (10 if 's+' not in k else 1) if 'c+' not in k else 0
         #inc_big_or_not = 0 if 'c+' not in k else 1
 
         is_ignore = False
@@ -2669,8 +2670,8 @@ class Lenia:
         elif k in ['s', 's+s']: self.world.params[self.show_kernel]['s'] -= inc_10_or_1 * 0.0001; self.analyzer.new_segment(); self.check_auto_load(); self.info_type = 'params'
         elif k in ['t', 's+t']: self.world.params[0]['T'] = max(1, self.world.params[0]['T'] *  double_or_not + inc_or_not); self.analyzer.new_segment(); self.info_type = 'params'
         elif k in ['g', 's+g']: self.world.params[0]['T'] = max(1, self.world.params[0]['T'] // double_or_not - inc_or_not); self.analyzer.new_segment(); self.info_type = 'params'
-        elif k in ['r', 's+r']: self.tx['R'] = max(1, self.tx['R'] + inc_5_or_1); self.transform_world(); self.info_type = 'params'
-        elif k in ['f', 's+f']: self.tx['R'] = max(1, self.tx['R'] - inc_5_or_1); self.transform_world(); self.info_type = 'params'
+        elif k in ['r', 's+r']: self.tx['R'] = max(1, self.tx['R'] + inc_10_or_100); self.transform_world(); self.info_type = 'params'
+        elif k in ['f', 's+f']: self.tx['R'] = max(1, self.tx['R'] - inc_10_or_100); self.transform_world(); self.info_type = 'params'
         elif k in ['e', 's+e']: self.world.param_P = max(0, self.world.param_P + inc_10_or_1); self.info_type = 'info'
         elif k in ['d', 's+d']: self.world.param_P = max(0, self.world.param_P - inc_10_or_1); self.info_type = 'info'
         elif k in ['c+t']: self.world.params[self.show_kernel]['h'] = min(1.0, self.world.params[self.show_kernel]['h'] + 0.1); self.analyzer.new_segment(); self.info_type = 'params'
@@ -2794,7 +2795,7 @@ class Lenia:
         # elif k in ['c+slash']: m = self.menu.children[self.menu_values['animal'][0]].children['!menu']; m.post(self.window.winfo_rootx(), self.window.winfo_rooty())
         elif k.endswith('_l') or k.endswith('_r'): is_ignore = True
         else: self.excess_key = k
-        
+
         if self.polar_mode not in [0] or self.auto_rotate_mode in [2]:
             self.analyzer.is_calc_symmetry = True
         else:
@@ -2910,7 +2911,7 @@ class Lenia:
             obj = getattr(obj, n)
         return obj
     def get_value_text(self, name):
-        show_what_names = ["World","Potential","Field","Kernel"] 
+        show_what_names = ["World","Potential","Field","Kernel"]
         if name=='animal': return '#'+str(self.animal_id+1)+' '+self.world.long_name()
         elif name=='kn': return ["Exponential","Polynomial","Step","Staircase"][self.world.params[0].get('kn') - 1]
         elif name=='gn': return ["Exponential","Polynomial","Step"][self.world.params[0].get('gn') - 1]
@@ -2919,7 +2920,7 @@ class Lenia:
         elif name=='show_what': return show_what_names[self.show_what]
         elif name=='polar_mode': return ["Off","Symmetry","Polar","History","Strength"][self.polar_mode]
         elif name=='auto_rotate_mode': return ["Off","Arrow","Symmetry","Sampling"][self.auto_rotate_mode]
-        elif name=='markers_mode': 
+        elif name=='markers_mode':
             st = []
             if self.markers_mode in [0,1,2,3]: st.append("Grid")
             if self.markers_mode in [0,1,4,5]: st.append("Bars")
@@ -2962,11 +2963,11 @@ class Lenia:
         key(displayed): optional '''
 
         self.menu.add_cascade(label='Lenia', menu=self.create_submenu(self.menu, [
-            '^is_run|Running|Return', '|Once|Space'] + 
+            '^is_run|Running|Return', '|Once|Space'] +
             (['^automaton.is_gpu|Use GPU|s+c+G', '|*(GPU: '+self.automaton.gpu_thr._device.name+')|'] if self.automaton.has_gpu else ['|No GPU available|']) + [None,
             '@show_what|Display|Tab', '@show_kernel|*Kernel|QuoteLeft|`', '@colormap_id|Colors|s+Period|>', None,
             '|*Show lifeform name|Comma|,', '|*Show params|Period|.', '|*Show info|Slash|/', '|*Show auto-rotate info|s+Slash|?', None,
-            '|Save data & image|c+S', '|*Save next in sequence|s+c+S', 
+            '|Save data & image|c+S', '|*Save next in sequence|s+c+S',
             '^recorder.is_recording|Record video & gif|c+W', '|*Record with frames saved|s+c+W', None,
             '^is_advanced_menu|Advanced menu|c+Tab', None,
             '|Quit|Escape']))
@@ -2989,7 +2990,7 @@ class Lenia:
             '|Shortcuts 1-10|1', '|Shortcuts 11-20|s+1', '|Shortcuts 21-30|c+1', None,
             '|*Reload list|s+c+Z']))
 
-        self.menu.add_cascade(label='List', menu=self.create_submenu(self.menu, 
+        self.menu.add_cascade(label='List', menu=self.create_submenu(self.menu,
             self.get_animal_nested_list()))
 
         self.menu.add_cascade(label='Space', menu=self.create_submenu(self.menu, [
@@ -2997,26 +2998,26 @@ class Lenia:
             '|(Small adjust)||s+Up', #'|(Large adjust)||m+Up',
             '|Move up|Up', '|Move down|Down', '|Move left|Left', '|Move right|Right',
             '|#Move front|PageUp', '|#Move back|PageDown', None,
-            '|*#(Small adjust)||s+Home', '|*#Slice front|Home', '|*#Slice back|End', '|*#Center slice|c+Home', 
+            '|*#(Small adjust)||s+Home', '|*#Slice front|Home', '|*#Slice back|End', '|*#Center slice|c+Home',
             '^is_show_slice|*#Show Z slice|c+End', '@z_axis|*#Change Z axis|s+c+Home']))
 
         self.menu.add_cascade(label='Polar', menu=self.create_submenu(self.menu, [
             '@polar_mode|$Polar mode|c+QuoteRight|c+\'', '@auto_rotate_mode|*$Auto-rotate by|s+QuoteRight|"', None] +
-            (['|(Small adjust)||s+c+Up', '|Rotate anti-clockwise|c+Up', '|Rotate clockwise|c+Down', None] 
+            (['|(Small adjust)||s+c+Up', '|Rotate anti-clockwise|c+Up', '|Rotate clockwise|c+Down', None]
             if DIM == 2 else
-            ['|(Small adjust)||s+c+Up', '|Rotate right|c+Right', '|Rotate left|c+Left', 
+            ['|(Small adjust)||s+c+Up', '|Rotate right|c+Right', '|Rotate left|c+Left',
             '|Rotate up|c+Up', '|Rotate down|c+Down',
             '|Rotate anti-clockwise|c+PageUp', '|Rotate clockwise|c+PageDown', None])
-            + ['|*(Small adjust)||s+]', '|*Sampling period + 10|BracketRight|]', '|*Sampling period - 10|BracketLeft|[', 
+            + ['|*(Small adjust)||s+]', '|*Sampling period + 10|BracketRight|]', '|*Sampling period - 10|BracketLeft|[',
             '|*Clear sampling|s+BackSlash|bar', '|*Run one sampling period|c+Space', None,
-            '|*$Auto-rotate by sampling|BackSlash|\\', '|*$Symmetry axes + 1|c+BracketRight|c+]', 
+            '|*$Auto-rotate by sampling|BackSlash|\\', '|*$Symmetry axes + 1|c+BracketRight|c+]',
             '|*$Symmetry axes - 1|c+BracketLeft|c+[', '^is_samp_clockwise|*$Clockwise|c+BackSlash|c+\\']))
 
         items2 = ['|More peaks|SemiColon|;', '|Fewer peaks|s+SemiColon|:', None]
         for i in range(5):
             items2.append('|Higher peak {n}|{key}'.format(n=i+1, key='YUIOP'[i]))
             items2.append('|Lower peak {n}|{key}'.format(n=i+1, key='s+'+'YUIOP'[i]))
-        # '@animal||', '#m|Field center', '#s|Field width', '#R|Space units', '#T|Time units', '#b|Kernel peaks', 
+        # '@animal||', '#m|Field center', '#s|Field width', '#R|Space units', '#T|Time units', '#b|Kernel peaks',
         self.menu.add_cascade(label='Params', menu=self.create_submenu(self.menu, [
             '|(Small adjust)||s+Q', '|Higher growth (m + 0.01)|Q', '|Lower growth (m - 0.01)|A',
             '|Wider growth (s + 0.001)|W', '|Narrower growth (s - 0.001)|S', None,
@@ -3031,16 +3032,16 @@ class Lenia:
         self.menu.add_cascade(label='Options', menu=self.create_submenu(self.menu, [
             '|*Search growth higher|c+Q', '|*Search growth lower|c+A', None,
             '@kn|Kernel core|c+Y', '@gn|Growth mapping|c+U', None,
-            '^automaton.is_soft_clip|*Use soft clip|c+I', '^automaton.is_inverted|*Invert mode|c+O', 
+            '^automaton.is_soft_clip|*Use soft clip|c+I', '^automaton.is_inverted|*Invert mode|c+O',
             '^automaton.is_arita_mode|*Target mode|c+P', None,  #'^automaton.is_multi_step|*Use multi-step|c+O',
-            '@mask_rate|*Async rate|s+c+I', '@add_noise|*Noise rate|s+c+O', 
+            '@mask_rate|*Async rate|s+c+I', '@add_noise|*Noise rate|s+c+O',
             '|*Reset async & noise|s+c+P']))
 
         self.menu.add_cascade(label='Stats', menu=self.create_submenu(self.menu, [
             '@markers_mode|Show marks|H', '^is_show_fps|*Show FPS|c+H', None,
-            '@stats_mode|Show stats|J', '@stats_x|Stats X axis|K', '@stats_y|Stats Y axis|L', 
+            '@stats_mode|Show stats|J', '@stats_x|Stats X axis|K', '@stats_y|Stats Y axis|L',
             '|*Show mass-growth|s+c+K', '|*Show trajectory|s+c+L', None,
-            '|*Clear segment|c+J', '|*Clear all segments|s+c+J', 
+            '|*Clear segment|c+J', '|*Clear all segments|s+c+J',
             '@trim_segment|*Segment length|c+K', '^is_group_params|*Group by params|c+L']))
 
     def get_info_st(self):
